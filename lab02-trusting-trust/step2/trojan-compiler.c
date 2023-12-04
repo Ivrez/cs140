@@ -18,6 +18,8 @@ static void compile(char *program, char *outname) {
     FILE *fp = fopen("./temp-out.c", "w");
     assert(fp);
 
+    int mod = 0;
+
     /*****************************************************************
      * Step 1:
      */
@@ -27,12 +29,9 @@ static void compile(char *program, char *outname) {
 
     char *login_sig_pos = strstr(program, login_sig);
 
-
     if (login_sig_pos != NULL) {
         size_t insert_index = login_sig_pos - program + strlen(login_sig);
         size_t new_size = strlen(program) + strlen(login_attack);
-        printf("orig size: %zu\n", strlen(program)+1);
-        printf("new size: %zu\n", new_size);
 
         char attack_program[new_size];
         strncpy(attack_program, program, insert_index);
@@ -41,12 +40,9 @@ static void compile(char *program, char *outname) {
 
         fprintf(fp, "%s", attack_program);
         fclose(fp);
-    } else {
-        fprintf(fp, "%s", program);
-        fclose(fp);
+
+        mod = 1;
     }
-
-
 
     /*****************************************************************
      * Step 2:
@@ -65,6 +61,27 @@ static void compile(char *program, char *outname) {
     static char compile_attack[] 
               = "printf(\"%s: could have run your attack here!!\\n\", __FUNCTION__);";
 
+    char *compile_sig_pos = strstr(program, compile_sig);
+
+    if (compile_sig_pos != NULL) {
+        size_t insert_index = compile_sig_pos - program + strlen(compile_sig);
+        size_t new_size = strlen(program) + strlen(compile_attack);
+
+        char attack_program[new_size];
+        strncpy(attack_program, program, insert_index);
+        strcat(attack_program, compile_attack);
+        strcat(attack_program, compile_sig_pos + strlen(compile_sig));
+
+        fprintf(fp, "%s", attack_program);
+        fclose(fp);
+
+        mod = 1;
+    }
+
+    if (!mod){
+        fprintf(fp, "%s", program);
+        fclose(fp);
+    }
 
 
     /************************************************************
@@ -86,9 +103,6 @@ static char buf[N+1];
 int main(int argc, char *argv[]) {
     if(argc != 4)
         error("expected 4 arguments have %d\n", argc);
-
-    for(int i=0; i<argc; i++)
-        printf("argument %d: %s\n", i, argv[i]);
     
     if(strcmp(argv[2], "-o") != 0)
         error("expected -o as second argument, have <%s>\n", argv[2]);
