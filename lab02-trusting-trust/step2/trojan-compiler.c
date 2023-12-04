@@ -52,14 +52,14 @@ static void compile(char *program, char *outname) {
     static char compile_sig[] =
             "static void compile(char *program, char *outname) {\n"
             "    FILE *fp = fopen(\"./temp-out.c\", \"w\");\n"
-            "    assert(fp);"
+            "    assert(fp);\n"
             ;
 
     // and inject a placeholder "attack":
     // inject this after the assert above after the call to fopen.
     // not much of an attack.   this is just a quick placeholder.
     static char compile_attack[] 
-              = "printf(\"%s: could have run your attack here!!\\n\", __FUNCTION__);";
+              = "    printf(\"%s: could have run your attack here!!\\n\", __FUNCTION__);\n";
 
     char *compile_sig_pos = strstr(program, compile_sig);
 
@@ -71,6 +71,8 @@ static void compile(char *program, char *outname) {
         strncpy(attack_program, program, insert_index);
         strcat(attack_program, compile_attack);
         strcat(attack_program, compile_sig_pos + strlen(compile_sig));
+
+        printf("%s", attack_program);
 
         fprintf(fp, "%s", attack_program);
         fclose(fp);
