@@ -3,7 +3,7 @@
 int main() {
     FILE *file = stdin;  // stdin for input file
 
-    int maxArraySize = 512;
+    int maxArraySize = 4096;
     char realProg[maxArraySize];
 
     int i = 0;
