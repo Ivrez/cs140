@@ -1,10 +1,10 @@
-ARM = arm-none-eabi
-CC = $(ARM)-gcc
-LD  = $(ARM)-ld
-AS  = $(ARM)-as
-OD  = $(ARM)-objdump
-OCP = $(ARM)-objcopy
-AS  = $(ARM)-as
+TOOLCHAIN = arm-none-eabi
+CC = $(TOOLCHAIN)-gcc
+LD  = $(TOOLCHAIN)-ld
+AS  = $(TOOLCHAIN)-as
+OD  = $(TOOLCHAIN)-objdump
+OCP = $(TOOLCHAIN)-objcopy
+AS  = $(TOOLCHAIN)-as
 
 all: kernel7.img
 

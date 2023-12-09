@@ -1,4 +1,4 @@
-// ARM32 example
+// ARM32 code (Armv7-A)
 
 // for understanding:
 // BCM2837 ARM Peripherals
@@ -31,7 +31,7 @@ _start:
 	str r2, [r0, #GPFSEL2]
 
 	# set counter
-	ldr r3, =0x800000
+	ldr r3, =0x80000
 
 loop:
 	# turn on the LED
@@ -41,10 +41,10 @@ loop:
 	str r2, [r0, #GPFSET0] // store in set register
 
 	# wait for some time, delay
-	eor r10, r10, r10
+	eor r10, r10, r10 // way of seting 0 to register
 	delay1:
-		add r10, r10, #1
-		cmp r10, r3
+		add r10, r10, #1 // add 1 to r10
+		cmp r10, r3 // if r10 not equal to r3(0x80000)
 		bne delay1
 
 	# turn off the LED
