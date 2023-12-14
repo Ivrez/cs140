@@ -2,7 +2,7 @@
 
 #include "rpi.h"
 
-int main(void) {
+void main(void) {
     int led1 = 21;
     int led2 = 20;
 
