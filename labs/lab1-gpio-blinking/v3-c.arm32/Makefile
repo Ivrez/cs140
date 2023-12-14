@@ -8,7 +8,13 @@ AS  = $(toolchain)-as
 
 LINKFILE = linker.ld
 
-all: kernel7.img
+ASMS = start.s 
+SRCS = main.c gpio.c
+OBJS = $(ASMS:.s=.o) $(SRCS:.c=.o)
+
+TARGET = kernel
+
+all: $(TARGET)7.img
 
 %.o: %.s
 	$(AS) $< -o $@
@@ -16,11 +22,14 @@ all: kernel7.img
 %.o: %.c
 	$(CC) -c $< -o $@
 
-kernel.elf: start.o main.o
+$(TARGET).elf: $(OBJS)
 	$(LD) -T $(LINKFILE) $^ -o $@
 
-kernel7.img: kernel.elf
+$(TARGET)7.img: $(TARGET).elf
 	$(OCP) $< -O binary $@
+
+show-dmp: $(TARGET).elf
+	$(OD) -D $<
 
 # Need env variable DRIVE 
 copy-to-drive: kernel7.img
