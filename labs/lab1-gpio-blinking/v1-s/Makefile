@@ -8,7 +8,7 @@ AS  = $(TOOLCHAIN)-as
 
 all: kernel7.img
 
-%.o: %.S
+%.o: %.s
 	$(AS) $< -o $@
 
 kernel.elf: start.o
