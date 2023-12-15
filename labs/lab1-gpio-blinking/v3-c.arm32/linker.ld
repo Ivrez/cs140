@@ -10,7 +10,9 @@ MEMORY
 
 SECTIONS
 {
-    .text : { *(.text*) } > ram
-    .bss : { *(.bss*) } > ram
-    /DISCARD/ : { *(.comment) } > ram
+    .text.bootload : { *(.text.bootload) } > ram /* start.s */
+    .text : { *(.text) } > ram /* c code */
+    .data : { *(.data) } > ram /* .data refers to initialized global and static objects */
+    .bss : { *(.bss) } > ram /* .bss refers to uninitialized global and static objects */
+    /DISCARD/ : { *(.comment) } > ram /* exclude code comments */
 }

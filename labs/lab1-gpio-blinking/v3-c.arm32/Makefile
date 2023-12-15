@@ -12,9 +12,9 @@ ASMS = start.s
 SRCS = main.c gpio.c
 OBJS = $(ASMS:.s=.o) $(SRCS:.c=.o)
 
-TARGET = kernel
+TARGET = kernel7
 
-all: $(TARGET)7.img
+all: $(TARGET).img
 
 %.o: %.s
 	$(AS) $< -o $@
@@ -25,14 +25,14 @@ all: $(TARGET)7.img
 $(TARGET).elf: $(OBJS)
 	$(LD) -T $(LINKFILE) $^ -o $@
 
-$(TARGET)7.img: $(TARGET).elf
+$(TARGET).img: $(TARGET).elf
 	$(OCP) $< -O binary $@
 
 show-dmp: $(TARGET).elf
 	$(OD) -D $<
 
 # Need env variable DRIVE 
-copy-to-drive: kernel7.img
+copy-to-drive: $(TARGET).img
 	@if [ -z "$(strip $(DRIVE))" ]; then \
 		echo "Error: DRIVE is not set" ;\
 	else \
