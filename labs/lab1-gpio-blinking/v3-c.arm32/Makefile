@@ -6,10 +6,14 @@ OD  = $(toolchain)-objdump
 OCP = $(toolchain)-objcopy
 AS  = $(toolchain)-as
 
+CFLAGS = -O -Wall -Wno-unused-variable -Werror \
+          -nostdlib -ffreestanding
+
 LINKFILE = linker.ld
 
+MAIN = main2.c
 ASMS = start.s 
-SRCS = main.c gpio.c
+SRCS = $(MAIN) gpio.c
 OBJS = $(ASMS:.s=.o) $(SRCS:.c=.o)
 
 TARGET = kernel7
@@ -20,7 +24,7 @@ all: $(TARGET).img
 	$(AS) $< -o $@
 
 %.o: %.c
-	$(CC) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 $(TARGET).elf: $(OBJS)
 	$(LD) -T $(LINKFILE) $^ -o $@
