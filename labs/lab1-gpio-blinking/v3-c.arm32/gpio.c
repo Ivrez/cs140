@@ -28,17 +28,40 @@ void gpio_set_output(uint32_t gpio_pin) {
         default: return;
     }
 
-    uint32_t current_fsel_mask = 0;
-    uint32_t new_output_mask = 0;
+    uint32_t current_fsel_mask = GET32(pin_fsel);
 
-    current_fsel_mask = GET32(pin_fsel);
+    // 001 << (unit * 3)
+    // activate pin as output
+    current_fsel_mask |= (GPIO_FUNC_OUTPUT << (u*FSEL_BIT_SHIFT));
 
-    // 1 << (unit * 3)
-    new_output_mask = (GPIO_FUNC_OUTPUT << (u * FSEL_BIT_SHIFT));
+    PUT32(pin_fsel, current_fsel_mask);
+    return;
+}
 
-    new_output_mask = current_fsel_mask | new_output_mask;
+void gpio_set_input(uint32_t gpio_pin) {
+    if(gpio_pin > GPIO_CNT)
+        return;
 
-    PUT32(pin_fsel, new_output_mask);
+    int t = gpio_pin / 10;
+    int u = gpio_pin % 10;
+
+    uint32_t pin_fsel;
+
+    switch (t) {
+        case 0: pin_fsel = gpio_fsel0; break;
+        case 1: pin_fsel = gpio_fsel1; break;
+        case 2: pin_fsel = gpio_fsel2; break;
+        case 3: pin_fsel = gpio_fsel3; break;
+        default: return;
+    }
+
+    uint32_t current_fsel_mask = GET32(pin_fsel);
+
+    // ~(111 << (unit * 3))
+    // activate pin as input
+    current_fsel_mask &= ~(0b111u << (u*FSEL_BIT_SHIFT));
+
+    PUT32(pin_fsel, current_fsel_mask);
     return;
 }
 
